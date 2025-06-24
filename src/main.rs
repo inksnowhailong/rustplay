@@ -1,5 +1,5 @@
 use std::fmt;
-use std::fmt::{write, Binary};
+use std::fmt::Binary;
 
 fn main() {
     // struct SomeStruct(i32);
@@ -60,13 +60,26 @@ fn main() {
     struct Wc {
         real: f32,
         imag: f32,
-    };
+    }
+
     impl fmt::Display for Wc {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(f, "{:.2} + {:.2}i", self.real, self.imag)
         }
     }
 
-    println!("Display: {}",Wc {real:3.3,imag:7.2});
-    println!("Complex: {:?}",Wc {real:3.3,imag:7.2} );
+    println!(
+        "Display: {}",
+        Wc {
+            real: 3.3,
+            imag: 7.2
+        }
+    );
+    println!(
+        "Complex: {:?}",
+        Wc {
+            real: 3.3,
+            imag: 7.2
+        }
+    );
 }
