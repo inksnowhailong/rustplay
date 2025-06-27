@@ -61,3 +61,4 @@ fn main() {
         .unwrap();
     println!("after defining closure: {list:?}");
 }
+

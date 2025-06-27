@@ -23,14 +23,36 @@ pub struct Config {
     pub file_path: String,
     pub ignore_case: bool,
 }
+//  初代
+// impl Config {
+//     pub fn build(args: &[String]) -> Result<Config, &'static str> {
+//         if args.len() < 3 {
+//             return Err("参数量不足");
+//         }
+//         let query = args[1].clone();
+//         let file_path = args[2].clone();
+//         let ignore_case = env::var("IGNORE_CASE").is_ok();
 
+//         Ok(Config {
+//             query,
+//             file_path,
+//             ignore_case,
+//         })
+//     }
+// }
 impl Config {
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("参数量不足");
-        }
-        let query = args[1].clone();
-        let file_path = args[2].clone();
+    pub fn build(mut args:impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next(); //跳过第一个参数，第一个参数是程序名称
+
+        let query = match args.next(){
+            Some(arg) =>arg,
+            None=>Err("缺少查询文本")
+        };
+        let file_path = match args.next(){
+            Some(arg) =>arg,
+            None=>Err("缺少查询文件路径")
+        };
+
         let ignore_case = env::var("IGNORE_CASE").is_ok();
 
         Ok(Config {
@@ -109,16 +131,29 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<QueryResult<'a>> {
     //                 None
     //             }
     //         }).collect()
-    contents
-        .lines()
-        .enumerate()
-        .filter_map(|(i, line)| {
-            line.contains(&query).then(|| QueryResult {
+    // 初代
+    // contents
+    //     .lines()
+    //     .enumerate()
+    //     .filter_map(|(i, line)| {
+    //         line.contains(&query).then(|| QueryResult {
+    //             line,
+    //             line_num: i + 1,
+    //         })
+    //     })
+    //     .collect()
+
+    let mut results = Vec::new();
+
+    for (i,line) in contents.lines().enumerate(){
+        if line.contains(query){
+            results.push(QueryResult{
                 line,
                 line_num: i + 1,
-            })
-        })
-        .collect()
+            });
+        }
+    }
+    results
 }
 
 // 无视大小写的搜索
